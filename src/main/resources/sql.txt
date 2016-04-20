@@ -1,0 +1,18 @@
+//创建数据库
+create database test character set utf8;
+	//角色
+	create table TbRole(id int primary key auto_increment,level int,description varchar(100));
+	//用户
+	create table TbUser(account varchar(100) primary key,password varchar(100) not null,name varchar(100),pic varchar(100), age int default 18,sex varchar(10),tag varchar(100),description varchar(500),createDate varchar(20),lastLoginDate varchar(20));
+	//订单
+	create table TbOrder (id varchar(100) primary key,createTime varchar(20),userId varchar(100)not null, foreign key(userId) references TbUser(account));
+	//用户角色 表
+	create table TbUser_TbRole(roleId int,userId varchar(100), foreign key(roleId) references TbRole(id) ,foreign key(userId) references TbUser(account),primary key(roleId,userId));
+	
+	
+
+
+//创建表
+insert into TbRole(level,description)value(0,'普通用户');
+insert into TbRole(level,description)value(1,'商家');
+insert into TbRole(level,description)value(2,'管理员');
