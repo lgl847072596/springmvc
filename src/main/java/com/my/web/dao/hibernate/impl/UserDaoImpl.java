@@ -18,6 +18,7 @@ public class UserDaoImpl implements IHUserDao {
 		Transaction transaction=session.beginTransaction();
 		session.save(tbUser);		
 		transaction.commit();
+		session.close();
 	}
 
 }

@@ -49,6 +49,9 @@ http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
 	<bean id="handlerExceptionResolver" class="com.my.web.exception.CustomHandlerExceptionResolver">
 		<property name="errorPage" value="error/exception" /><!-- 错误页面 -->
 	</bean>
+	
+	 <!-- 支持上传文件 -->  
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"/>  
 
 	<!-- 拦截器 -->
 	<mvc:interceptors>

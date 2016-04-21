@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.my.web.dao.hibernate.IHAppDao;
 import com.my.web.po.TbApp;
+import com.my.web.po.TbOldApp;
 import com.my.web.service.IAppService;
 @Service
 public class AppServiceImpl implements IAppService {
@@ -22,16 +23,34 @@ public class AppServiceImpl implements IAppService {
 		hAppDao.update(tbApp);
 	}
 
-	public void delete(int id) throws Exception {
-		hAppDao.delete(id);
+	public void delete(String packageName,String platform) throws Exception {
+		hAppDao.delete(packageName, platform);
 	}
 
-	public TbApp queryById(int id) throws Exception {
-		return hAppDao.queryById(id);
+	public List<TbApp> queryAll(String platform) throws Exception {
+		return hAppDao.queryAll(platform);
 	}
 
-	public List<TbApp> queryAll() throws Exception {
-		return hAppDao.queryAll();
+	public TbOldApp findOldApkByPackageNameAndVersion(String packageName, int versionCode,String platform) throws Exception {
+		// TODO Auto-generated method stub
+		return hAppDao.findOldApkByPackageNameAndVersion(packageName,versionCode,platform);
+	}
+
+	public void update(TbOldApp oldApp) throws Exception {
+		hAppDao.update(oldApp);
+	}
+
+	public void save(TbOldApp oldApp) throws Exception {
+		hAppDao.save(oldApp);
+	}
+
+	public List<TbOldApp> queryByPackageName(String packageName, String platform) throws Exception {
+		return hAppDao.queryByPackageName(packageName,platform);
+	}
+
+	public TbApp queryByPackageNameAndPlatform(String packageName, String platform) throws Exception {
+		// TODO Auto-generated method stub
+		return hAppDao.queryByPackageNameAndPlatform(packageName,platform);
 	}
 
 }

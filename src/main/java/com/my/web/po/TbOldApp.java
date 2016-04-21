@@ -10,8 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "TbApp")
-public class TbApp implements Serializable {
+@Table(name = "TbOldApp")
+public class TbOldApp implements Serializable {
 
 	// 下载路径
 	private String url;
@@ -29,10 +29,10 @@ public class TbApp implements Serializable {
 	private String updateTime;
 	// 该版本下载次数
 	private Long downLoadCount = 0L;
-    //平台
+	// 平台
 	private String platform;
-	
-	public TbApp() {
+
+	public TbOldApp() {
 		// TODO Auto-generated constructor stub
 	}
 
@@ -40,7 +40,7 @@ public class TbApp implements Serializable {
 	public String getUrl() {
 		return url;
 	}
-
+    
 	@Column(name = "appName")
 	public String getAppName() {
 		return appName;
@@ -52,11 +52,12 @@ public class TbApp implements Serializable {
 		return packageName;
 	}
 
+
 	@Column(name = "versionName")
 	public String getVersionName() {
 		return versionName;
 	}
-	
+	@Id
 	@Column(name = "versionCode")
 	public int getVersionCode() {
 		return versionCode;
@@ -75,14 +76,12 @@ public class TbApp implements Serializable {
 	@Column(name = "downLoadCount")
 	public Long getDownLoadCount() {
 		return downLoadCount;
-	}
-	
+	}	
 	@Id
 	@Column(name = "platform")
 	public String getPlatform() {
 		return platform;
 	}
-
 
 	public void setUrl(String url) {
 		this.url = url;
@@ -115,20 +114,20 @@ public class TbApp implements Serializable {
 	public void setDownLoadCount(Long downLoadCount) {
 		this.downLoadCount = downLoadCount;
 	}
-	
+
+
+
 	public void setPlatform(String platform) {
 		this.platform = platform;
 	}
 
 	@Override
 	public String toString() {
-		return "TbApp [url=" + url + ", appName=" + appName + ", packageName=" + packageName + ", versionName="
+		return "TbOldApp [url=" + url + ", appName=" + appName + ", packageName=" + packageName + ", versionName="
 				+ versionName + ", versionCode=" + versionCode + ", versionIntroduce=" + versionIntroduce
 				+ ", updateTime=" + updateTime + ", downLoadCount=" + downLoadCount + ", platform=" + platform + "]";
 	}
 
 	
-	
-	
-	
+
 }
