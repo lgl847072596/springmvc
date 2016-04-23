@@ -5,29 +5,27 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import com.my.web.po.TbApp;
+import com.my.web.po.TbAppCategory;
 import com.my.web.po.TbOldApp;
 
 @Repository
 public interface IAppService {
+
+	void uploadApp(TbApp dexApp, String realPathDir)throws Exception;
+
+	List<TbApp> queryAccountTbAppByPlatform(String platform, String account)throws Exception;
 	
-	public void save(TbApp tbApp)throws Exception;
-	
-	public void update(TbApp tbApp)throws Exception;
-	
-	public void delete(String packageName,String platform)throws Exception;
-	
-	
-	public List<TbApp>queryAll(String platform)throws Exception;
+	List<TbOldApp> queryAccountOldAppByPlatform(String platform, String account)throws Exception;
 
-	public TbOldApp findOldApkByPackageNameAndVersion(String packageName, int versionCode,String platform)throws Exception;
+	TbOldApp findOldAppByPlatformAndUrl(String platform, String url)throws Exception;
 
-	public void update(TbOldApp oldApp)throws Exception;
+	void updateTbOldApp(TbOldApp oldApp)throws Exception;
 
-	public void save(TbOldApp oldApp)throws Exception;
+	TbApp findTbAppByPlatformAndUrlOrMappingUrl(String platform, String url, String mappingUrl)throws Exception;
 
-	public List<TbOldApp> queryByPackageName(String packageName, String platform)throws Exception;
+	void updateTbApp(TbApp app)throws Exception;
 
-	public TbApp queryByPackageNameAndPlatform(String packageName, String platform)throws Exception;
+	TbApp queryTbAppByPackageNameAndPlatform(String packageName, String platform)throws Exception;
 
-
+	List<TbAppCategory> getAppCategoryByAccountAndPlatform(String belongAccount, String platform)throws Exception;
 }

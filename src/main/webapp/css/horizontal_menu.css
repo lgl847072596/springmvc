@@ -1,0 +1,54 @@
+
+ul,li,img,a,div{
+    border: 0;
+    list-style: none;
+}
+
+div{
+    display: block;
+}
+
+a{
+    color: white;
+    text-decoration: none;
+    outline: none;
+}
+
+em{
+    font-weight: normal;
+}
+
+.ue-bar{
+    background-color: green;
+    width: 100%;
+    height: 70px;
+    margin: 0 auto;
+    overflow: hidden;
+    position: relative;
+}
+
+
+
+.ue-bar-nav li{
+    float: left;
+    height: 70px;
+    margin-right: 0.5px;
+    margin-left: 0.5px;
+}
+.ue-bar-nav li *{
+    font-size: 15px;
+    display: inline-block;
+    line-height: 17px;
+    vertical-align: top;
+}
+.ue-bar-nav li a{
+    height: 22px;
+    line-height: 22px;
+    padding: 26px 17px;
+}
+.active{
+    background-color: #62c082;
+}
+.ue-bar-nav li a:hover{
+    background-color: #62c082;
+}

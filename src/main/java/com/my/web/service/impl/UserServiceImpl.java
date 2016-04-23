@@ -1,25 +1,23 @@
 package com.my.web.service.impl;
 
 import java.util.HashMap;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.my.web.dao.hibernate.IHUserDao;
-import com.my.web.dao.mybatis.IMUserDao;
+import com.my.web.dao.impl.IHUserDao;
 import com.my.web.po.TbUser;
+import com.my.web.po.TbUserDetail;
 import com.my.web.service.IUserService;
 @Service
 public class UserServiceImpl implements IUserService {
-
-	@Autowired
-	private IMUserDao mUserDao;
 	
 	@Autowired
 	private IHUserDao hUserDao;
 	
 	public TbUser findUserByAccount(String account) throws Exception {
-		return mUserDao.findUserByAccount(account);
+		return hUserDao.findUserByAccount(account);
 	}
 
 	public void save(TbUser tbUser) throws Exception {
@@ -27,10 +25,28 @@ public class UserServiceImpl implements IUserService {
 	}
 
 	public TbUser findUserByAccount(String account, String password) throws Exception {
-		HashMap map=new HashMap();
-		map.put("account", account);
-		map.put("password", password);
-		return mUserDao.findUser(map);
+
+		return hUserDao.findUserByAccountAndPassword(account,password);
 	}
+
+	public List<TbUser> findNoCheckUser() throws Exception {
+		return hUserDao.findNoCheckUser();
+	}
+
+	public void update(TbUser tbUser) throws Exception {
+		 hUserDao.update(tbUser);
+	}
+
+	public TbUserDetail findUserDetailByAccount(String account) throws Exception {
+		return hUserDao.findUserDetailByAccount(account);
+	}
+
+
+
+	public void saveOrupdateTbUserDetail(TbUserDetail person) throws Exception {
+		hUserDao.saveOrUpdate(person);
+	}
+	
+	
 
 }

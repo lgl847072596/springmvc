@@ -1,18 +1,88 @@
 //创建数据库
 create database test character set utf8;
-	//角色
-	create table TbRole(id int primary key auto_increment,level int,description varchar(100));
-	//用户
-	create table TbUser(account varchar(100) primary key,password varchar(100) not null,name varchar(100),pic varchar(100), age int default 18,sex varchar(10),tag varchar(100),description varchar(500),createDate varchar(20),lastLoginDate varchar(20));
-	//订单
-	create table TbOrder (id varchar(100) primary key,createTime varchar(20),userId varchar(100)not null, foreign key(userId) references TbUser(account));
-	//用户角色 表
-	create table TbUser_TbRole(roleId int,userId varchar(100), foreign key(roleId) references TbRole(id) ,foreign key(userId) references TbUser(account),primary key(roleId,userId));
-	
-	
+
+—角色表
+create table Tb_Role(
+    roleId int auto_increment primary key,
+    roleLevel int ,
+    roleDesc varchar(100)
+);
 
 
-//创建表
-insert into TbRole(level,description)value(0,'普通用户');
-insert into TbRole(level,description)value(1,'商家');
-insert into TbRole(level,description)value(2,'管理员');
+
+—用户表
+create table Tb_User(
+ 	userId varchar(200) primary key,
+ 	account varchar(40) not null unique ,
+ 	password varchar(100) not null,
+            createTime varchar(20),
+            checkTime varchar(20),
+            roleLevel int default 0
+);
+//用户详细
+create table Tb_User_Detail(
+  account varchar(40)not null primary key,
+  name varchar(100),
+  sex varchar(10),
+  birthDay varchar(20),
+  pic varchar(100),
+  company varchar(200),
+  teamName varchar(200),
+  tag varchar(500)
+
+);
+
+--应用分类
+create table Tb_Category(
+  categoryId varchar(200),
+  categoryName varchar(100) not null,
+   belongAccount varchar(40) not null,
+   platform varchar(40)not null,
+  createTime varchar(20),
+  primary key(categoryName,belongAccount,platform)
+);
+--最新应用表
+create table Tb_App(
+           appId varchar(200) primary key,
+           appName varchar(100),
+           packageName varchar(100)not null,
+          platform varchar(20)not null,
+          versionCode int,
+         versionName varchar(20),
+         log varchar(500),
+         forceUpdate int,
+         downloadCount long,
+         createTime varchar(20),
+        updateTime varchar(20),
+        mappingUrl varchar(200),
+        url varchar(200),
+        belongAccount varchar(40) not null,
+        categoryId varchar(200)
+);
+—应用历史记录
+create table Tb_Old_App(
+          appId varchar(200) primary key,
+           appName varchar(100),
+           packageName varchar(100)not null,
+          platform varchar(20)not null,
+          versionCode int,
+         versionName varchar(20),
+         log varchar(500),
+         forceUpdate int,
+         downloadCount long,
+         createTime varchar(20),
+        updateTime varchar(20),
+        url varchar(200),
+        belongAccount varchar(40) not null,
+        categoryId varchar(200)
+);
+
+//角色数据初始化	
+insert into Tb_Role(roleLevel,roleDesc)value(0,"未认证");
+insert into Tb_Role(roleLevel,roleDesc)value(1,"普通账户");
+insert into Tb_Role(roleLevel,roleDesc)value(2,"普通管理员");
+insert into Tb_Role(roleLevel,roleDesc)value(3,"administrator");
+//管理员123456
+ insert into Tb_User(userId,account,password,roleLevel)value("10001","18106978842","e10adc3949ba59abbe56e057f20f883e",3);
+ insert into Tb_User(userId,account,password,roleLevel)value("10002","18106978843","e10adc3949ba59abbe56e057f20f883e",2);
+ insert into Tb_User(userId,account,password,roleLevel)value("10003","18106978844","e10adc3949ba59abbe56e057f20f883e",2);

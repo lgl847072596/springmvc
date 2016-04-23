@@ -1,9 +1,11 @@
 package com.my.web.po;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -13,129 +15,95 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
+
 @Entity
-@Table(name="TbUser")
+@Table(name = "Tb_User")
 public class TbUser implements Serializable {
-	
+	@Id
+	 @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid")
+	@Column
+	private String userId;
+	@Column
 	private String account;
+	@Column
 	private String password;
-	private String name;
-	private String pic;
-	private int age;
-	private String  sex;
-	private String tag;
-	private String description;
-	private String createDate;
-	private String lastLoginDate;
-	private int active;//0 未激活 1激活
+	@Column
+	private String createTime;
+	@Column
+	private String checkTime;
+	@Column
+	private int roleLevel = 0;
 	
 	public TbUser() {
 	}
 	
+	
 
-	public TbUser(String account, String password, int active) {
+	public TbUser(String account, String password, String createTime, int roleLevel) {
 		super();
 		this.account = account;
 		this.password = password;
-		this.active = active;
+		this.createTime = createTime;
+		this.roleLevel = roleLevel;
 	}
 
-   
-   @Id
-	@Column(name="account",length=100,nullable=false,unique=true)
+
+
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
 	public String getAccount() {
 		return account;
-	}
-	
-	@Column(name="password",length=100,nullable=false)
-	public String getPassword() {
-		return password;
-	}
-	
-	@Column(name="name",length=100)
-	public String getName() {
-		return name;
-	}
-
-	@Column(name="pic")
-	public String getPic() {
-		return pic;
-	}
-	@Column(name="age")
-	public int getAge() {
-		return age;
-	}
-	
-	@Column(name="active")
-	public int getActive() {
-		return active;
-	}
-	
-	@Column(name="sex")
-	public String getSex() {
-		return sex;
-	}
-	@Column(name="tag",length=400)
-	public String getTag() {
-		return tag;
-	}
-	@Column(name="description",length=800)
-	public String getDescription() {
-		return description;
-	}
-	@Column(name="createDate",length=20)
-	public String getCreateDate() {
-		return createDate;
-	}
-	@Column(name="lastLoginDate",length=20)
-	public String getLastLoginDate() {
-		return lastLoginDate;
 	}
 
 	public void setAccount(String account) {
 		this.account = account;
 	}
 
+	public String getPassword() {
+		return password;
+	}
+
 	public void setPassword(String password) {
 		this.password = password;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public String getCreateTime() {
+		return createTime;
 	}
 
-	public void setPic(String pic) {
-		this.pic = pic;
+	public void setCreateTime(String createTime) {
+		this.createTime = createTime;
 	}
 
-	public void setAge(int age) {
-		this.age = age;
-	}
-	
-	public void setActive(int active) {
-		this.active = active;
+	public String getCheckTime() {
+		return checkTime;
 	}
 
-	public void setSex(String sex) {
-		this.sex = sex;
+	public void setCheckTime(String checkTime) {
+		this.checkTime = checkTime;
 	}
 
-	public void setTag(String tag) {
-		this.tag = tag;
+	public int getRoleLevel() {
+		return roleLevel;
 	}
 
-	public void setDescription(String description) {
-		this.description = description;
+	public void setRoleLevel(int roleLevel) {
+		this.roleLevel = roleLevel;
 	}
 
-	public void setCreateDate(String createDate) {
-		this.createDate = createDate;
-	}
-
-	public void setLastLoginDate(String lastLoginDate) {
-		this.lastLoginDate = lastLoginDate;
+	@Override
+	public String toString() {
+		return "TbUser [userId=" + userId + ", account=" + account + ", password=" + password + ", createTime="
+				+ createTime + ", checkTime=" + checkTime + ", roleLevel=" + roleLevel + "]";
 	}
 	
 	
-
+	
 }

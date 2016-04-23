@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import com.alibaba.fastjson.JSONObject;
+import com.my.web.config.Contants;
 import com.my.web.exception.CustomException;
 import com.my.web.model.JSONResultModel;
 import com.my.web.model.UserPo;
@@ -124,8 +125,10 @@ public class AuthorHandlerInterceptor extends HandlerInterceptorAdapter {
 	 */
 	public boolean checkRequest(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
 		//未登录的全部前往登录页面
-		if(request.getSession().getAttribute("user")==null){
-			response.sendRedirect(request.getContextPath()+"/page/login.jsp");
+		if(request.getSession().getAttribute(Contants.USER)==null){
+			
+			response.getOutputStream().print("<script>window.parent.location.href='"+request.getContextPath()+"';</script>");
+			response.getOutputStream().flush();
 			return false;
 		}
         return true;

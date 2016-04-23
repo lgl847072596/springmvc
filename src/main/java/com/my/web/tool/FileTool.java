@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.net.URLEncoder;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.http.HttpStatus;
@@ -17,15 +18,15 @@ public class FileTool {
 	 * @param response
 	 * @throws Exception
 	 */
-	public static void writeAppToResponse(String path,String filename,boolean isApk,HttpServletResponse response) throws Exception{
+	public static void writeAppToResponse(String path,String filename,HttpServletRequest request,HttpServletResponse response) throws Exception{
 		 response.setStatus(HttpStatus.OK.value());
 		 response.setCharacterEncoding("utf-8");
-		 response.setHeader("content-disposition","attachment;filename="+URLEncoder.encode(filename,"UTF-8"));
-		if(isApk){
-			 response.setContentType("application/vnd.android.package-archive;charset=UTF-8");
-		}
+		 response.setHeader("content-disposition","attachment;filename="+getCodeString(request,filename));
+	    response.setContentType("application.x-msdownload;charset=UTF-8");
 		
 		FileInputStream fis=new FileInputStream(path);
+		
+		
 		ByteArrayOutputStream bos=new ByteArrayOutputStream();
 		byte[]buff=new byte[1024];
 		int len=0;
@@ -33,9 +34,25 @@ public class FileTool {
 			bos.write(buff, 0, len);
 		}
 		fis.close();
+		response.setContentLength(bos.size());
 		response.getOutputStream().write(bos.toByteArray());
 		bos.close();
 		response.getWriter().flush();
 	}
-	
+
+	public static String getCodeString(HttpServletRequest request,String fileName)throws Exception{
+		String browName=null;
+		String clientInfo=request.getHeader("User-agent");
+		if(clientInfo!=null&&clientInfo.indexOf("MSIE")>0){
+			//IE采用URLEncoder方式处理
+			if(clientInfo.indexOf("MSIE6")>0||clientInfo.indexOf("MSIE5")>0){
+				browName=new String(fileName.getBytes("GBK"),"ISO-8859-1");
+			}else{
+				browName=URLEncoder.encode(fileName,"UTF-8");
+			}
+		}else{
+			browName=new String(fileName.getBytes("GBK"),"ISO-8859-1");
+		}
+		return browName;
+	}
 }
