@@ -24,7 +24,7 @@ table {
 td {
 	margin: 5px;
 	padding: 5px;
-	border: #bcbcbc 1px solid;
+	border: green 1px solid;
 	text-align: center;
 }
 </style>

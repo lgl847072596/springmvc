@@ -65,6 +65,8 @@ public class AppController {
 			boolean isApk=apk.getOriginalFilename().endsWith(".apk");
 			
 			String relativeDir=isApk?FileConfig.UPLOAD_FILE_APK:FileConfig.UPLOAD_FILE_APP;
+			relativeDir+=po.getAccount()+"/";
+			
 			String suffix=isApk?".apk":".ipa";
 			
 			// 获取本机真实路径
