@@ -10,6 +10,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" name="viewport">
 <title>历史应用列表</title>
 <style type="text/css">
 table {
@@ -59,7 +60,9 @@ td {
 				<th>版本号</th>
 				<th>最新时间</th>
 				<th>下载次数</th>
+				<th>详细信息</th>
 				<th>应用下载</th>
+			
 			</tr>
 			<c:forEach var="apk" items="${appList}" varStatus="status">
 				<tr>
@@ -70,9 +73,12 @@ td {
 					<td>${apk.versionCode}</td>
 					<td>${apk.updateTime}</td>
 					<td>${apk.downloadCount}次</td>
+					<td><a
+						href="<%=basePath%>app/goToUpdateApk.action?packageName=${apk.packageName}&platform=${apk.platform}">查看</a></td>
+					
 					<td><c:if test="${apk.platform =='android'}">
 							<a
-								href="<%=basePath%>app/public/download/app.action?categroy=old&platform=${apk.platform}&url=${apk.url}&mappingUrl=${apk.mappingUrl}">下载</a>
+								href="<%=basePath%>app/public/download/app.action?categroy=old&platform=${apk.platform}&url=${apk.url}">下载</a>
 						</c:if></td>
 				</tr>
 			</c:forEach>

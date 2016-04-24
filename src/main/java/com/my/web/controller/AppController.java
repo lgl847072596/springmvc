@@ -9,10 +9,12 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.jsp.HttpJspPage;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,6 +25,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.my.web.config.Contants;
 import com.my.web.config.FileConfig;
 import com.my.web.exception.CustomException;
+import com.my.web.model.AppVersionPo;
 import com.my.web.model.JSONResultModel;
 import com.my.web.po.TbApp;
 import com.my.web.po.TbAppCategory;
@@ -94,6 +97,8 @@ public class AppController {
 					dexApp.setLog(app.getLog());
 					dexApp.setMappingUrl(app.getMappingUrl());
 					dexApp.setUrl(url);
+					dexApp.setCreateTime(app.getCreateTime());
+					dexApp.setForceUpdate("true");
 					
 					TbUser user=(TbUser) request.getSession().getAttribute(Contants.USER);
 					dexApp.setBelongAccount(user.getAccount());
@@ -141,7 +146,8 @@ public class AppController {
 	@RequestMapping(value="/appOldlist.action",method = RequestMethod.GET)
 	public String queryAccountNewAppByPlatform(@RequestParam String packageName, @RequestParam String platform,
 			HttpServletRequest request) throws Exception {
-		List<TbOldApp> appList = appService.queryAccountOldAppByPlatform(packageName, platform);
+		TbUser user=(TbUser) request.getSession().getAttribute(Contants.USER);
+		List<TbOldApp> appList = appService.queryAccountOldAppByPlatformAndPackageName(packageName, platform,user.getAccount());
 		request.setAttribute("appList", appList);
 		request.setAttribute("platform", platform);
 		return "protected/app/appOldList";
@@ -175,7 +181,7 @@ public class AppController {
 				url=path+oldApp.getUrl().replace(relativeDir, "/");
 				oldApp.setDownloadCount(oldApp.getDownloadCount() + 1);
 				appService.updateTbOldApp(oldApp);
-				outPutName=CharacterTool.isNullOrEmpty(oldApp.getAppName())?null:oldApp.getAppName()+suffix;
+				outPutName=CharacterTool.isNullOrEmpty(oldApp.getAppName())?null:oldApp.getAppName()+"-"+oldApp.getVersionCode()+suffix;
 			}else{
 				url=null;
 			}
@@ -185,7 +191,7 @@ public class AppController {
 				url=path+app.getUrl().replace(relativeDir, "/");
 				app.setDownloadCount(app.getDownloadCount() + 1);
 				appService.updateTbApp(app);
-				outPutName=CharacterTool.isNullOrEmpty(app.getAppName())?null:app.getAppName()+suffix;
+				outPutName=CharacterTool.isNullOrEmpty(app.getAppName())?null:app.getAppName()+"-"+app.getVersionCode()+suffix;
 			}else{
 				url=null;
 			}
@@ -227,13 +233,13 @@ public class AppController {
 	 * @throws Exception
 	 */
 	@RequestMapping(value="/goToUpdateApk.action",method = RequestMethod.GET)
-	public String goToUpdateApk(@RequestParam String packageName, @RequestParam String platform,
+	public String goToUpdateApk(@RequestParam String packageName,@RequestParam String platform,
 			HttpServletRequest request) throws Exception {
 		
 		TbUser po=(TbUser) request.getSession().getAttribute(Contants.USER);
 		if(po.getRoleLevel()>0){
 			if(Contants.ANDROID.equals(platform)||Contants.IOS.equals(platform)){}
-			else platform=Contants.ANDROID;
+			else platform=Contants.ANDROID;		
 			
 			TbApp app = appService.queryTbAppByPackageNameAndPlatform(packageName, platform);
 			request.setAttribute("platform", platform);
@@ -267,24 +273,31 @@ public class AppController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping("/app/lastversion.json")
+	@RequestMapping("/public/lastversion.json")
 	@ResponseBody
-	public JSONResultModel<Map> getLastVersion(@RequestParam String platform, String packageName) throws Exception {
+	public JSONResultModel<TbApp> getLastVersion(@RequestBody AppVersionPo app,HttpServletRequest request) throws Exception {
 		
-		TbApp app = appService.queryTbAppByPackageNameAndPlatform(packageName, platform);
-		if(app!=null){
-			
+		if(CharacterTool.isNullOrEmpty(app.getPlatform())||CharacterTool.isNullOrEmpty(app.getPackageName())){
+			if(CharacterTool.isNullOrEmpty(app.getPlatform()))
+				throw new CustomException("应用平台不能为空");
+			if(CharacterTool.isNullOrEmpty(app.getPackageName()))
+				throw new CustomException("应用包名不能为空");
+			throw new CustomException("需要的参数是platform和packageName");
+		}
+		
+		TbApp tempAPP = appService.queryTbAppByPackageNameAndPlatform(app.getPackageName(), app.getPlatform());
+		if(tempAPP!=null){
+			String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
+			+ request.getContextPath() + "/";
+			tempAPP.setUrl(basePath+tempAPP.getUrl());
 			//不把ios的下载路径给出来
-			if(Contants.IOS.equals(platform)){
-				app.setUrl("");
+			if(Contants.IOS.equals(app.getPlatform())){
+				tempAPP.setUrl("");
 			}
-			
-			Map map = new HashMap();
-			map.put("app", app);
-			JSONResultModel<Map> response = new JSONResultModel<Map>(true, map);
+			JSONResultModel<TbApp> response = new JSONResultModel<TbApp>(true, tempAPP);
 			return response;
 		}
-		return new JSONResultModel<Map>(false, "未找到应用信息");
+		return new JSONResultModel<TbApp>(false, "未找到应用信息");
 	}
 
 }

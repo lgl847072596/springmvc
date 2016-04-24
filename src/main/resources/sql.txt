@@ -1,5 +1,5 @@
 //创建数据库
-create database test character set utf8;
+create database ylzappupdate character set utf8;
 
 —角色表
 create table Tb_Role(
@@ -50,7 +50,7 @@ create table Tb_App(
           versionCode int,
          versionName varchar(20),
          log varchar(500),
-         forceUpdate int,
+         forceUpdate varchar(10),
          downloadCount long,
          createTime varchar(20),
         updateTime varchar(20),
@@ -68,7 +68,7 @@ create table Tb_Old_App(
           versionCode int,
          versionName varchar(20),
          log varchar(500),
-         forceUpdate int,
+          forceUpdate varchar(10),
          downloadCount long,
          createTime varchar(20),
         updateTime varchar(20),
@@ -83,6 +83,6 @@ insert into Tb_Role(roleLevel,roleDesc)value(1,"普通账户");
 insert into Tb_Role(roleLevel,roleDesc)value(2,"普通管理员");
 insert into Tb_Role(roleLevel,roleDesc)value(3,"administrator");
 //管理员123456
- insert into Tb_User(userId,account,password,roleLevel)value("10001","18106978842","e10adc3949ba59abbe56e057f20f883e",3);
- insert into Tb_User(userId,account,password,roleLevel)value("10002","18106978843","e10adc3949ba59abbe56e057f20f883e",2);
- insert into Tb_User(userId,account,password,roleLevel)value("10003","18106978844","e10adc3949ba59abbe56e057f20f883e",2);
+ insert into Tb_User(userId,account,password,roleLevel)value("10001","administrator","e10adc3949ba59abbe56e057f20f883e",3);
+ insert into Tb_User(userId,account,password,roleLevel)value("10002","yjymanager","e10adc3949ba59abbe56e057f20f883e",2);
+ insert into Tb_User(userId,account,password,roleLevel)value("10003","yhjmanager","e10adc3949ba59abbe56e057f20f883e",2);

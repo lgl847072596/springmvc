@@ -1,6 +1,7 @@
 package com.my.web.service.impl;
 
 import java.io.File;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import com.my.web.po.TbApp;
 import com.my.web.po.TbAppCategory;
 import com.my.web.po.TbOldApp;
 import com.my.web.service.IAppService;
+import com.my.web.tool.DateTool;
 @Service
 public class AppServiceImpl implements IAppService {
 
@@ -27,6 +29,7 @@ public class AppServiceImpl implements IAppService {
 		//从应用表中查找
 		TbApp app=appDao.queryTbAppByPackageNameAndPlatform(poApp.getPackageName(), poApp.getPlatform());
 		if(app==null){
+			poApp.setCreateTime(DateTool.formatData(new Date()));
 			appDao.save(poApp);
 		}else{
 			if(app.getVersionCode()>poApp.getVersionCode()){
@@ -58,6 +61,7 @@ public class AppServiceImpl implements IAppService {
 						oldApp.setForceUpdate(app.getForceUpdate());
 						oldApp.setLog(app.getLog());
 						oldApp.setUpdateTime(app.getUpdateTime());
+						oldApp.setCreateTime(app.getCreateTime());
 						oldApp.setUrl(app.getUrl());
 						oldApp.setPlatform(app.getPlatform());
 						oldApp.setPackageName(app.getPackageName());
@@ -82,9 +86,6 @@ public class AppServiceImpl implements IAppService {
 
 
 
-	public List<TbOldApp> queryAccountOldAppByPlatform(String platform, String belongAccount) throws Exception {
-		return oldAppDao.queryAccountOldTbAppByPlatform(platform,belongAccount);
-	}
 
 
 
@@ -122,6 +123,14 @@ public class AppServiceImpl implements IAppService {
 	public List<TbAppCategory> getAppCategoryByAccountAndPlatform(String belongAccount, String platform) throws Exception {
 		
 		return appDao.getAppCategoryByAccountAndPlatform(belongAccount,platform);
+	}
+
+
+
+	public List<TbOldApp> queryAccountOldAppByPlatformAndPackageName(String packageName, String platform, String account)
+			throws Exception {
+		// TODO Auto-generated method stub
+		return oldAppDao.queryAccountOldAppByPlatformAndPackageName(packageName,platform,account);
 	}
 
 	

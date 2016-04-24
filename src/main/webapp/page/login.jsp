@@ -9,6 +9,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" name="viewport">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>用户登录</title>
  <link type="text/css" rel="stylesheet" href="<%=basePath%>css/login.css">
@@ -47,7 +48,7 @@ function register(){
         <div style="text-align: center;padding-top: 20px;"><label style="font-size: 20px;font-weight: bold">用户登录</label></div>
 
         <div id="cd-login"> <!-- 登录表单 -->
-            <form class="cd-form" id="form">
+            <form class="cd-form" id="form" method="post">
                 <p class="fieldset">
                     <label class="image-replace cd-username" for="signin-username">用户名</label>
                     <input class="full-width has-padding has-border" id="signin-username" name="account" type="text" placeholder="输入账号">

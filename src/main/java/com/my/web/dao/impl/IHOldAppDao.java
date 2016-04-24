@@ -45,19 +45,25 @@ public class IHOldAppDao extends IHBaseDao {
 	
 	}
 
-	public List<TbOldApp> queryAccountOldTbAppByPlatform(String platform, String belongAccount) throws Exception{
+	
+
+	public List<TbOldApp> queryAccountOldAppByPlatformAndPackageName(String packageName, String platform,
+			String belongAccount) {
+
 		Session session=sessionFactory.openSession();
 		Transaction transaction=session.beginTransaction();
 		
-		List<TbOldApp>list=session.createQuery("from TbOldApp where platform=? and belongAccount=?")
+		List<TbOldApp>list=session.createQuery("from TbOldApp where platform=? and packageName=? and belongAccount=?")
 				.setParameter(0, platform)
-				.setParameter(1, belongAccount)
+				.setParameter(1, packageName)
+				.setParameter(2, belongAccount)
 				.list();
 		
 		transaction.commit();
 		session.close();
 		
 		return list;
+	
 	
 	}
 
