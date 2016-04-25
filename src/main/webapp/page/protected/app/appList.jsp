@@ -76,10 +76,7 @@ td {
 					<td>${apk.updateTime}</td>
 					<td>${apk.downloadCount}次</td>
 					<td>${apk.mappingUrl}</td>
-					<td><c:if test="${apk.platform =='android'}">
-							<a
-								href="<%=basePath%>app/public/download/app.action?categroy=new&platform=${apk.platform}&url=${apk.url}&mappingUrl=${apk.mappingUrl}">下载</a>
-						</c:if></td>
+					<td><a href="${apk.mappingUrl}">下载</a></td>
 					<td><a
 						href="<%=basePath%>app/appOldlist.action?packageName=${apk.packageName}&platform=${apk.platform}">历史版本</a></td>
 

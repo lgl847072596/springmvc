@@ -83,5 +83,21 @@ public  class IHAppDao extends IHBaseDao{
 		
 		return list;
 	}
+
+	public TbApp findTbAppByPlatformAndMappingUrl(String platform, String mappingUrl) {
+	
+		Session session=sessionFactory.openSession();
+		Transaction transaction=session.beginTransaction();
+		
+		List<TbApp>list=session.createQuery("from TbApp where platform=? and mappingUrl=?")
+				.setParameter(0, platform)
+				.setParameter(1, mappingUrl)
+				.list();
+		
+		transaction.commit();
+		session.close();
+		
+		return list.isEmpty()?null:list.get(0);
+	}
 	
 }

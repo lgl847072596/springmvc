@@ -38,14 +38,21 @@ function upload(){
 
 		<h3 style="text-size: 24px; padding-top: 10px; padding-bottom: 10px;"><c:if test="${platform =='android'}">Android 应用上传</c:if><c:if test="${platform =='ios'}">IOS 应用上传</c:if></h3>
 	</div>
-	<form id="uploadForm" action="<%=basePath%>app/upload.action" method="POST" enctype="multipart/form-data">
+	<form id="uploadForm" action="<%=basePath%>app/upload.action" method="POST" >
+	<input type="text" name="platform" value="${platform}" hidden="hidden"/>
 	<table>
 	 
 	 <tr><td>名字</td><td><input type="text" name="appName" value="${app.appName}" class="inputClass"/></td></tr>
-	 <tr><td>版本</td><td><input type="text" name="versionCode" value="${app.versionCode}"   class="inputClass" disabled/></td></tr>
-	  <tr><td>包名</td><td><input type="text" name="packageName" value="${app.packageName}"   class="inputClass"disabled/></td></tr>
-	 <tr><td>应用文件</td><td><input type="file" name="apk" <c:if test="${platform =='android'}">accept=".apk"</c:if><c:if test="${platform =='ios'}">accept=".ipa"</c:if>/></td></tr>
+	 <tr><td>版本</td><td><input type="text" name="versionCode" value="${app.versionCode}"   class="inputClass" /></td></tr>
+	  <tr><td>包名</td><td><input type="text" name="packageName" value="${app.packageName}"   class="inputClass"/></td></tr>	  
 	 <tr><td>映射别名</td><td><input type="text" name="mappingUrl" value="${app.mappingUrl}"  class="inputClass"/></td></tr>
+	 <tr><td>强制更新</td>
+	 	<td><select name="forceUpdate">
+	 			<option value="false" <c:if test="${app.forceUpdate=='false'}">selected</c:if>>否</option>
+	 			<option value="true" <c:if test="${app.forceUpdate=='true'}">selected</c:if>>是</option>	 			
+	 		</select>
+	 	</td>
+	</tr>
 	 <tr><td>版本说明</td><td><textarea rows="6" cols="43" name="log">${app.log}</textarea></td></tr>
 	 <tr><td></td><td><button class="submitClass">提交更新</button></td></tr>
 	

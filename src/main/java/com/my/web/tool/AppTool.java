@@ -70,8 +70,8 @@ public class AppTool {
 		Map map=analysiIpa(new FileInputStream(path));
         String packageName=map.get("CFBundleIdentifier")+"";
         int versionCode=Integer.parseInt(map.get("CFBundleVersion")+"");
-        String appName=map.get("CFBundleName")+"";
-        String shortVersionString=map.get("CFBundleShortVersionString")+"";
+        String appName=map.get("CFBundleDisplayName")+"";
+        String shortVersionString=(map.get("CFBundleShortVersionString")+"").replace("\\.", "");
         
         TbApp model=new TbApp();
 		model.setAppName(appName);
@@ -79,7 +79,7 @@ public class AppTool {
 		model.setUpdateTime(DateTool.formatData(new Date()));
 		model.setUrl("");
 		model.setDownloadCount(0L);
-		model.setVersionCode(versionCode);
+		model.setVersionCode(Integer.parseInt(shortVersionString));
 		model.setPackageName(packageName);
 		model.setVersionName(shortVersionString);		
 		model.setPlatform(Contants.IOS);

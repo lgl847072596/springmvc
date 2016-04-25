@@ -45,13 +45,13 @@ public class AppController {
 	@Autowired
 	private IAppService appService;
 	@RequestMapping(value="/upload.action",method = RequestMethod.POST)
-	public String upLoadApp(@RequestParam String appName,String versionCode,String packageName,@RequestParam  String log ,String mappingUrl,@RequestParam  MultipartFile apk, HttpServletRequest request)throws Exception{
-		
-		TbUser po=(TbUser) request.getSession().getAttribute(Contants.USER);
-		if(po.getRoleLevel()<1){
-			throw new CustomException("您不具备该权限"+po.getRoleLevel());
+	public String upLoadApp(@RequestParam String platform,@RequestParam String appName,String versionCode,String packageName,@RequestParam  String log ,String mappingUrl,String forceUpdate, HttpServletRequest request)throws Exception{
+		//1.校验上传权限
+		TbUser user=(TbUser) request.getSession().getAttribute(Contants.USER);
+		if(user.getRoleLevel()<1){
+			throw new CustomException("您不具备该权限"+user.getRoleLevel());
 		}
-		
+		//创建一个临时App
 		TbApp app=new TbApp();
 		app.setAppName(appName);
 		try {
@@ -62,61 +62,47 @@ public class AppController {
 		app.setMappingUrl(mappingUrl);
 		app.setLog(log);
 		
-		System.out.println("app:"+app);
-		
-		if(apk.getOriginalFilename().endsWith(".apk")||apk.getOriginalFilename().endsWith(".ipa")){
-			boolean isApk=apk.getOriginalFilename().endsWith(".apk");
-			
-			String relativeDir=isApk?FileConfig.UPLOAD_FILE_APK:FileConfig.UPLOAD_FILE_APP;
-			relativeDir+=po.getAccount()+"/";
-			
-			String suffix=isApk?".apk":".ipa";
-			
-			// 获取本机真实路径
-			String path = request.getSession().getServletContext().getRealPath(relativeDir);
-			// 给文件随机生成名字
-			String fileName = UUID.randomUUID().toString() + suffix;
-			File targetFile = new File(path, fileName);
-			new File(path).mkdirs();
-			//保存的相对路径
-			String url = "";
-			// 文件写入本地文件中
-			try {
-				apk.transferTo(targetFile);
-				url = relativeDir + fileName;
-			} catch (Exception e) {
-				e.printStackTrace();
-			} finally {
-				// 文件写入成功
-				if (targetFile.exists()) {
-					System.out.println("app保存路径：" + targetFile.getAbsolutePath());
-					//对apk或ipa文件进行解包获取必要的信息
-					TbApp dexApp = AppTool.dex(targetFile.getAbsolutePath(),isApk?Contants.ANDROID:Contants.IOS);
-					if(!CharacterTool.isNullOrEmpty(app.getAppName()))dexApp.setAppName(app.getAppName());
-					dexApp.setForceUpdate(app.getForceUpdate());
-					dexApp.setLog(app.getLog());
-					dexApp.setMappingUrl(app.getMappingUrl());
-					dexApp.setUrl(url);
-					dexApp.setCreateTime(app.getCreateTime());
-					dexApp.setForceUpdate("true");
-					
-					TbUser user=(TbUser) request.getSession().getAttribute(Contants.USER);
-					dexApp.setBelongAccount(user.getAccount());
-					appService.uploadApp(dexApp,path.substring(0, path.length()-relativeDir.length()));
-					
-					request.setAttribute("app", dexApp);	
-					request.setAttribute("platform", dexApp.getPlatform());
-					request.setAttribute("success",true);
-					return "protected/app/upload";
-					
-				}else{
-					throw new CustomException("数据添加失败");
-				}
-			}
+		if("true".equals(forceUpdate)||"false".equals(forceUpdate)){
+			app.setForceUpdate(forceUpdate);
 		}else{
-			throw new CustomException("文件格式不对，不是移动应用。");
+			app.setForceUpdate("true");
 		}
 		
+		System.out.println("app:"+app);
+		
+		//检测必要的参数是否齐全
+		if(CharacterTool.isNullOrEmpty(platform)||CharacterTool.isNullOrEmpty(packageName)||CharacterTool.isNullOrEmpty(versionCode)||CharacterTool.isNullOrEmpty(mappingUrl)){
+			throw new CustomException("没有上传app,则必须保证其他字段完整");
+		}
+             
+	    //查询，保存，更新应用
+		TbApp tbApp=appService.queryTbAppByPackageNameAndPlatform(packageName, platform);
+		if(tbApp==null){				
+			tbApp=new TbApp();
+			tbApp.setBelongAccount(user.getAccount());
+			tbApp.setPlatform(platform);
+			tbApp.setCreateTime(DateTool.formatData(new Date()));
+		}	
+		
+		tbApp.setAppName(appName);
+		tbApp.setVersionCode(Integer.parseInt(versionCode));
+		tbApp.setPackageName(packageName);
+		tbApp.setVersionName(versionCode);
+		tbApp.setForceUpdate(forceUpdate);
+		tbApp.setLog(log);
+		tbApp.setMappingUrl(mappingUrl);
+		tbApp.setUpdateTime(DateTool.formatData(new Date()));
+		
+		
+		appService.uploadApp(tbApp,"");
+		request.setAttribute("app", tbApp);	
+		request.setAttribute("platform", tbApp.getPlatform());
+		request.setAttribute("success",true);
+		
+		return "protected/app/upload";
+		
+		
+	
 	}
 	
 
@@ -275,7 +261,7 @@ public class AppController {
 	 */
 	@RequestMapping("/public/lastversion.json")
 	@ResponseBody
-	public JSONResultModel<TbApp> getLastVersion(@RequestBody AppVersionPo app,HttpServletRequest request) throws Exception {
+	public JSONResultModel<Map> getLastVersion(@RequestBody AppVersionPo app,HttpServletRequest request) throws Exception {
 		
 		if(CharacterTool.isNullOrEmpty(app.getPlatform())||CharacterTool.isNullOrEmpty(app.getPackageName())){
 			if(CharacterTool.isNullOrEmpty(app.getPlatform()))
@@ -287,17 +273,27 @@ public class AppController {
 		
 		TbApp tempAPP = appService.queryTbAppByPackageNameAndPlatform(app.getPackageName(), app.getPlatform());
 		if(tempAPP!=null){
+			//基本路径
 			String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
 			+ request.getContextPath() + "/";
-			tempAPP.setUrl(basePath+tempAPP.getUrl());
-			//不把ios的下载路径给出来
-			if(Contants.IOS.equals(app.getPlatform())){
-				tempAPP.setUrl("");
+			
+			//对外都是使用mappingUrl
+			if(CharacterTool.isNullOrEmpty(tempAPP.getMappingUrl())){
+				return new JSONResultModel<Map>(false, "应用的映射路径未找到");
 			}
-			JSONResultModel<TbApp> response = new JSONResultModel<TbApp>(true, tempAPP);
-			return response;
+			//重新包装内容
+			Map map=new HashMap();
+			map.put("packageName", tempAPP.getPackageName());
+			map.put("versionCode", tempAPP.getVersionCode());
+			map.put("log", tempAPP.getLog());
+			map.put("updateTime", tempAPP.getUpdateTime());
+			map.put("forceUpdate", tempAPP.getForceUpdate());			
+			map.put("url", tempAPP.getMappingUrl());
+			return new JSONResultModel<Map>(true, map);
+		}else{
+			return new JSONResultModel<Map>(false, "未找到应用信息");
 		}
-		return new JSONResultModel<TbApp>(false, "未找到应用信息");
+		
 	}
 
 }

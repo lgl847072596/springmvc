@@ -14,6 +14,7 @@ import com.my.web.po.TbApp;
 import com.my.web.po.TbAppCategory;
 import com.my.web.po.TbOldApp;
 import com.my.web.service.IAppService;
+import com.my.web.tool.CharacterTool;
 import com.my.web.tool.DateTool;
 @Service
 public class AppServiceImpl implements IAppService {
@@ -37,7 +38,7 @@ public class AppServiceImpl implements IAppService {
 			}else{
 				//版本一样则删除旧的app，替换新的
 				if(app.getVersionCode()==poApp.getVersionCode()){
-					new File(realPathDir+app.getUrl()).delete();
+					if(!CharacterTool.isNullOrEmpty(realPathDir))new File(realPathDir+app.getUrl()).delete();
 					app.setUrl(poApp.getUrl());
 					poApp.setDownloadCount(app.getDownloadCount());
 					poApp.setAppId(app.getAppId());
@@ -46,7 +47,7 @@ public class AppServiceImpl implements IAppService {
 					//从历史记录中招
 					TbOldApp oldApp=oldAppDao.findOldAppByPackageNameAndVersion(app.getPackageName(), app.getVersionCode(), app.getPlatform());
 					if(oldApp!=null){
-						new File(realPathDir+oldApp.getUrl()).delete();
+						if(!CharacterTool.isNullOrEmpty(realPathDir))new File(realPathDir+oldApp.getUrl()).delete();
 						oldApp.setAppName(app.getAppName());
 						oldApp.setDownloadCount(app.getDownloadCount());
 						oldApp.setForceUpdate(app.getForceUpdate());
@@ -133,6 +134,16 @@ public class AppServiceImpl implements IAppService {
 		return oldAppDao.queryAccountOldAppByPlatformAndPackageName(packageName,platform,account);
 	}
 
+
+
+	public TbApp findTbAppByPlatformAndMappingUrl(String platform, String mappingUrl) throws Exception {
+		// TODO Auto-generated method stub
+		return appDao.findTbAppByPlatformAndMappingUrl(platform,mappingUrl);
+	}
+
+
+
+	
 	
 
 }

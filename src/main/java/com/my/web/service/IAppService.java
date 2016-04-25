@@ -29,4 +29,6 @@ public interface IAppService {
 	List<TbAppCategory> getAppCategoryByAccountAndPlatform(String belongAccount, String platform)throws Exception;
 
 	List<TbOldApp> queryAccountOldAppByPlatformAndPackageName(String packageName, String platform, String account)throws Exception;
+
+	TbApp findTbAppByPlatformAndMappingUrl(String platform, String mappingUrl)throws Exception ;
 }

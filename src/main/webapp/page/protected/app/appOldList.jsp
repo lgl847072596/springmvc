@@ -60,9 +60,7 @@ td {
 				<th>版本号</th>
 				<th>最新时间</th>
 				<th>下载次数</th>
-				<th>详细信息</th>
-				<th>应用下载</th>
-			
+				<th>详细信息</th>			
 			</tr>
 			<c:forEach var="apk" items="${appList}" varStatus="status">
 				<tr>
@@ -74,12 +72,8 @@ td {
 					<td>${apk.updateTime}</td>
 					<td>${apk.downloadCount}次</td>
 					<td><a
-						href="<%=basePath%>app/goToUpdateApk.action?packageName=${apk.packageName}&platform=${apk.platform}">查看</a></td>
+						href="<%=basePath%>app/goToUpdateApk.action?packageName=${apk.packageName}&platform=${apk.platform}">查看</a></td>		
 					
-					<td><c:if test="${apk.platform =='android'}">
-							<a
-								href="<%=basePath%>app/public/download/app.action?categroy=old&platform=${apk.platform}&url=${apk.url}">下载</a>
-						</c:if></td>
 				</tr>
 			</c:forEach>
 
